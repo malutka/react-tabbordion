@@ -53,6 +53,11 @@
     background: #FAFAFA;
 }
 
+.traditional-tabs-title--disabled {
+    color: #a8a8a8;
+    cursor: default;
+}
+
 .traditional-tabs-content {
     background: #FAFAFA;
     border-radius: 0 3px 3px 3px;

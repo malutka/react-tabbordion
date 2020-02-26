@@ -169,6 +169,13 @@
                                 React.createElement('p', {}, 'But we have something.')
                             )
                         ),
+                        Panel(
+                            {disabled: true},
+                            Label({}, 'Panel #4 - Disabled'),
+                            Content(
+                                null,
+                                React.createElement('p', {}, 'Blocked content.')
+                            )),
                         Panel(null, Label({}, 'Panel #3 - No Content')),
                         // non-Panel elements are allowed to be here
                         React.createElement(

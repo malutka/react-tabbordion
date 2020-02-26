@@ -95,6 +95,11 @@
     color: #b63;
 }
 
+.accordion-title--disabled {
+    color: #a8a8a8;
+    cursor: default;
+}
+
 .accordion-animator {
     background-color: #EBEBEB;
     -webkit-transition: background-color 125ms ease-in-out, height 375ms ease-in-out;

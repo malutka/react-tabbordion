@@ -196,7 +196,9 @@ class TabPanel extends PureComponent {
 
     /** Handler for TabLabel child */
     onClickLabel() {
-        const { index, onChangePanel, type } = this.cachedProps
+        console.log(this.cachedProps)
+        const { index, onChangePanel, type, disabled } = this.cachedProps
+        if (disabled) return
         if (onChangePanel) onChangePanel(index)
         // make sure focus goes to the input element, that is what sane browsers do when a label is clicked
         requestAnimationFrame(() => {
