@@ -13,6 +13,10 @@ export function getDisabled({ disabled }) {
     return disabled
 }
 
+export function getEnabled({ disabled }) {
+    return !disabled
+}
+
 export function getIndex({ index }) {
     return index
 }

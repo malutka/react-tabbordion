@@ -6,7 +6,7 @@ import { addSubscriber, removeSubscriber } from '../lib/contextSubscribe'
 import {
     getArray,
     getChecked,
-    getDisabled,
+    getDisabled, getEnabled,
     getIndex,
     isShallowlyDifferent,
     isShallowlyDifferentArray,
@@ -26,12 +26,14 @@ function getStateBem(props) {
 function getStateTabbordion(context, props, state) {
     const panels = getArray(state.stateful ? state.panels : props.panels)
 
+    //panels can be checked only when they are enabled
     return {
         animateContent: props.animateContent,
-        checkedPanels: panels.filter(getChecked).map(getIndex),
+        checkedPanels: panels.filter(getChecked).filter(getEnabled).map(getIndex),
         disabledPanels: panels.filter(getDisabled).map(getIndex),
         firstVisiblePanel: context.firstVisibleIndex,
         lastVisiblePanel: context.lastVisibleIndex,
+        firstSelectableIndex: context.firstSelectableIndex,
         panelName: props.name || context.uniqId,
         panelType: props.mode === 'multiple' ? 'checkbox' : 'radio',
         tabbordionId: props.id || context.uniqId,
@@ -55,6 +57,7 @@ class Tabbordion extends PureComponent {
 
         this.firstVisibleIndex = null
         this.lastVisibleIndex = null
+        this.firstSelectableIndex = null
 
         // panels always overrides initialPanels
         this.state = this.getNextState(
@@ -185,19 +188,23 @@ class Tabbordion extends PureComponent {
         let checkedCount = 0
         let firstVisibleIndex = null
         let lastVisibleIndex = null
+        let firstSelectableIndex = null
 
         const nextPanels = panelProps.map((props, index) => {
             const panel = panels.find(panel => panel.index === props.index) || { checked, disabled, visible }
 
-            const checked = (
-                props.checked != null ? props.checked : !!panel.checked
-            ) && (allowMultiChecked || checkedCount === 0)
-
             const disabled = props.disabled != null ? props.disabled : !!panel.disabled
+
+            //panel can be checked only when it is enabled
+            const checked = !disabled && ((
+                props.checked != null ? props.checked : !!panel.checked
+            ) && (allowMultiChecked || checkedCount === 0))
+
             const visible = props.visible != null ? props.visible : (panel.visible === false ? false : true)
 
             if (visible) {
                 lastVisibleIndex = index
+                if (!disabled && firstSelectableIndex == null) firstSelectableIndex = lastVisibleIndex
                 if (firstVisibleIndex == null) firstVisibleIndex = lastVisibleIndex
             }
 
@@ -211,20 +218,22 @@ class Tabbordion extends PureComponent {
             }
         })
 
-        if (firstVisibleIndex != null) {
+        if (firstSelectableIndex != null) {
             // one panel must always be checked in single mode
             if (checkedCount === 0 && props.mode !== 'multiple' && props.mode !== 'toggle') {
-                nextPanels[firstVisibleIndex].checked = true
+                nextPanels[firstSelectableIndex].checked = true
             }
             // it is now safe to use the actual indexes instead of references
             firstVisibleIndex = nextPanels[firstVisibleIndex].index
             lastVisibleIndex = nextPanels[lastVisibleIndex].index
+            firstSelectableIndex = nextPanels[firstSelectableIndex].index
         }
 
         // keep in local state: We can do this in this way because these values are derived from main panels state.
         //                      Also, this state is updated each time props change, thus we maintain "pureness".
         this.firstVisibleIndex = firstVisibleIndex
         this.lastVisibleIndex = lastVisibleIndex
+        this.firstSelectableIndex = firstSelectableIndex
 
         // determine who will own the state
         const stateful = !props.onChange || !props.onPanels || !Array.isArray(props.panels)

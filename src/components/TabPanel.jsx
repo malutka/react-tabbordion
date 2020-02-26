@@ -196,7 +196,6 @@ class TabPanel extends PureComponent {
 
     /** Handler for TabLabel child */
     onClickLabel() {
-        console.log(this.cachedProps)
         const { index, onChangePanel, type, disabled } = this.cachedProps
         if (disabled) return
         if (onChangePanel) onChangePanel(index)

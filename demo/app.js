@@ -65,7 +65,7 @@
     ]
 
     // this controls which demo props we use
-    var panels = [{ checked: true, index: 2 }]
+    var panels = [{ checked: true, index: 0 }]
 
     // class Demo extends React.PureComponent {}
     var Demo = createReactClass({
